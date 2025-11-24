@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insight Studio - AI-Powered Data Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles/custom.css">
+    <style>
+        @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+    
+    <!-- CRITICAL FIX: Define startDemo immediately -->
+    <script>
+        // Define startDemo immediately so it's available when buttons are clicked
+        function startDemo() {
+            console.log('🚀 Starting demo...');
+            // Show a simple loading message
+            if (typeof showLoading === 'function') {
+                showLoading('Loading demo data...');
+            } else {
+                // Fallback - create a simple loading message
+                const loadingEl = document.createElement('div');
+                loadingEl.id = 'tempLoading';
+                loadingEl.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                loadingEl.innerHTML = `
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                        <p class="text-gray-800 dark:text-white">Loading demo data...</p>
+                    </div>
+                `;
+                document.body.appendChild(loadingEl);
+                
+                // Remove after 3 seconds if main app doesn't load
+                setTimeout(() => {
+                    const tempLoading = document.getElementById('tempLoading');
+                    if (tempLoading) {
+                        tempLoading.remove();
+                        alert('Demo loaded! Check the upload section for sample data.');
+                    }
+                }, 3000);
+            }
+        }
+        
+        // Make it globally available immediately
+        window.startDemo = startDemo;
+        console.log('✅ startDemo defined in head script - ready for button clicks');
+        
+        // Also define scrollToFeatures
+        window.scrollToFeatures = function() {
+            const featuresSection = document.getElementById('features');
+            if (featuresSection) {
+                featuresSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold">IS</span>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">Insight Studio</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Features</a>
+                    <a href="#usecases" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Use Cases</a>
+                    <a href="#demo" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Demo</a>
+                    <a href="#upload" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Upload</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        <span id="darkModeIcon">🌙</span>
+                    </button>
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Sign In</button>
+                    <!-- FIXED: Remove onclick, we'll use event listeners -->
+                    <button id="tryDemoBtn" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors shadow-lg transform hover:scale-105 duration-200">
+                        Try Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white">
+        <div class="max-w-7xl mx-auto px-4 py-20">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                    Transform Data Into
+                    <span class="block text-purple-200 mt-2">Actionable Insights</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-purple-100 mb-8 max-w-3xl mx-auto">
+                    AI-powered exploratory data analysis for everyone. No coding required.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+                    <!-- FIXED: Remove onclick, we'll use event listeners -->
+                    <button id="startDemoBtn" class="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-purple-50 transition-colors shadow-lg text-lg transform hover:scale-105 duration-200">
+                        🚀 Start Free Demo
+                    </button>
+                    <button onclick="scrollToFeatures()" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors text-lg transform hover:scale-105 duration-200">
+                        📚 Explore Features
+                    </button>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-4xl mx-auto">
+                    <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
+                        <div class="bg-gray-800 p-4 flex items-center space-x-2">
+                            <div class="flex space-x-2">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            </div>
+                            <div class="text-gray-300 text-sm">Insight Studio Dashboard</div>
+                        </div>
+                        <!-- Fixed image using data URI -->
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iIzRGNDZFNSIvPgo8dGV4dCB4PSI0MDAiIHk9IjIwMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QUkgQW5hbHl0aWNzIERhc2hib2FyZDwvdGV4dD4KPC9zdmc+" alt="Dashboard Preview" class="w-full">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">Powerful Features</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300 text-center mb-12 max-w-3xl mx-auto">Everything you need for complete data analysis in one platform</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature Cards with direct Tailwind classes -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-purple-100 dark:bg-purple-900">
+                        <span class="text-2xl">📊</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Smart Data Profiling</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Automated statistics, distributions, and quality metrics with AI-powered insights</p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-teal-100 dark:bg-teal-900">
+                        <span class="text-2xl">🤖</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">AI-Powered Analysis</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Ask questions in plain English and get intelligent answers about your data</p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-blue-100 dark:bg-blue-900">
+                        <span class="text-2xl">📈</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Advanced Visualization</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Interactive charts, scatter matrices, and time series analysis</p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-green-100 dark:bg-green-900">
+                        <span class="text-2xl">🔍</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Anomaly Detection</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Automatically identify outliers and unusual patterns in your data</p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-orange-100 dark:bg-orange-900">
+                        <span class="text-2xl">📤</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">One-Click Export</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Export clean data, PDF reports, and reproducible Python code</p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-red-100 dark:bg-red-900">
+                        <span class="text-2xl">🔄</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Real-time Collaboration</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Share insights and collaborate with your team in real-time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">Upload Your Data</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300 text-center mb-12">Get started by uploading your CSV or Excel file</p>
+            
+            <!-- Upload Area -->
+            <div id="uploadArea" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-12 text-center transition-colors duration-300 hover:border-purple-400 cursor-pointer">
+                <div class="max-w-md mx-auto">
+                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">📤</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Drop your file here</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">or</p>
+                    <button id="uploadButton" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold">
+                        Browse Files
+                    </button>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">Supports CSV, XLSX, XLS files up to 50MB</p>
+                </div>
+                <input type="file" id="fileInput" class="hidden" accept=".csv,.xlsx,.xls">
+            </div>
+            
+            <!-- Data Profile Display -->
+            <div id="dataProfile" class="mt-8 hidden"></div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">See It In Action</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300">Experience the power of AI-driven data analysis</p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
+                <div class="grid lg:grid-cols-4">
+                    <!-- Sidebar -->
+                    <div class="lg:col-span-1 bg-gray-900 text-white p-6">
+                        <nav class="space-y-2">
+                            <a href="#" class="block px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">🏠 Home</a>
+                            <a href="#" class="block px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">📊 Analytics</a>
+                            <a href="#" class="block px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">🔧 Tools</a>
+                            <a href="#" class="block px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">📈 Reports</a>
+                            <a href="#" class="block px-4 py-2 rounded-lg bg-purple-600 text-white">🎯 Scope</a>
+                            <a href="#" class="block px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">⚙️ Settings</a>
+                        </nav>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="lg:col-span-3 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white">EDA Dashboard</h3>
+                            <div class="flex space-x-4">
+                                <button class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">🔍</button>
+                                <button class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">🔔</button>
+                                <button class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">👤</button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                            <div class="col-span-2 bg-white dark:bg-gray-700 p-4 rounded-xl shadow-lg">
+                                <h4 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Sales Performance</h4>
+                                <div class="h-64">
+                                    <canvas id="demoChart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-lg">
+                                    <h5 class="font-semibold mb-2 text-gray-800 dark:text-white">SealAI Datar</h5>
+                                    <div class="h-24">
+                                        <canvas id="miniChart1"></canvas>
+                                    </div>
+                                </div>
+                                <div class="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-lg">
+                                    <h5 class="font-semibold mb-2 text-gray-800 dark:text-white">Amhinder</h5>
+                                    <div class="h-24">
+                                        <canvas id="miniChart2"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- FIXED: Remove onclick, we'll use event listeners -->
+                        <button id="launchDemoBtn" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors transform hover:scale-105 duration-200">
+                            Launch Full Demo Experience
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section id="usecases" class="py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-12">Use Cases</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">🏢</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Business Analytics</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Sales forecasting, customer segmentation, and performance metrics</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">🔬</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Data Science</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Feature engineering, model preparation, and statistical analysis</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">📊</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Research</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Academic research, data validation, and reproducible analysis</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold">IS</span>
+                        </div>
+                        <span class="text-xl font-bold">Insight Studio</span>
+                    </div>
+                    <p class="text-gray-400">AI-powered data analytics for everyone.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#features" class="hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#usecases" class="hover:text-white transition-colors">Use Cases</a></li>
+                        <li><a href="#upload" class="hover:text-white transition-colors">Upload</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">GitHub</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Insight Studio. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load scripts in correct order -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/upload.js"></script>
+    
+    <!-- Add event listeners for demo buttons -->
+    <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners to all demo buttons
+            const demoButtons = [
+                document.getElementById('tryDemoBtn'),
+                document.getElementById('startDemoBtn'), 
+                document.getElementById('launchDemoBtn')
+            ];
+            
+            demoButtons.forEach(button => {
+                if (button) {
+                    button.addEventListener('click', startDemo);
+                    console.log('✅ Added event listener to:', button.id || button.textContent);
+                }
+            });
+            
+            console.log('✅ All demo buttons setup complete');
+        });
+    </script>
+</body>
+</html>

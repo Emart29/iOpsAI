@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Insight Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Insight Studio - System Test</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+            <h2 class="text-xl font-semibold mb-4">Backend Connection</h2>
+            <button id="testHealth" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Test Health
+            </button>
+            <div id="healthResult" class="mt-4"></div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+            <h2 class="text-xl font-semibold mb-4">File Upload Test</h2>
+            <input type="file" id="testFile" accept=".csv,.xlsx,.xls" class="mb-4">
+            <button id="testUpload" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Test Upload
+            </button>
+            <div id="uploadResult" class="mt-4"></div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">AI Question Test</h2>
+            <input type="text" id="testQuestion" placeholder="Ask a question..." class="border rounded px-4 py-2 w-full mb-4">
+            <button id="testAI" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                Test AI
+            </button>
+            <div id="aiResult" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Test health
+        document.getElementById('testHealth').addEventListener('click', async () => {
+            const result = document.getElementById('healthResult');
+            try {
+                result.innerHTML = '<p class="text-blue-600">Testing...</p>';
+                const health = await window.api.healthCheck();
+                result.innerHTML = `<pre class="bg-gray-100 p-4 rounded">${JSON.stringify(health, null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Test upload
+        document.getElementById('testUpload').addEventListener('click', async () => {
+            const result = document.getElementById('uploadResult');
+            const fileInput = document.getElementById('testFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                result.innerHTML = '<p class="text-red-600">Please select a file first</p>';
+                return;
+            }
+            
+            try {
+                result.innerHTML = '<p class="text-blue-600">Uploading...</p>';
+                const response = await window.api.uploadDatasetEnhanced(file);
+                result.innerHTML = `<pre class="bg-gray-100 p-4 rounded overflow-auto">${JSON.stringify(response, null, 2)}</pre>`;
+            } catch (error) { result.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+        }
+    });
+
+    // Test AI
+    document.getElementById('testAI').addEventListener('click', async () => {
+        const result = document.getElementById('aiResult');
+        const question = document.getElementById('testQuestion').value;
+        
+        if (!question) {
+            result.innerHTML = '<p class="text-red-600">Please enter a question</p>';
+            return;
+        }
+        
+        try {
+            result.innerHTML = '<p class="text-blue-600">Asking AI...</p>';
+            const response = await window.api.askAIQuestion(question);
+            result.innerHTML = `<pre class="bg-gray-100 p-4 rounded">${JSON.stringify(response, null, 2)}</pre>`;
+        } catch (error) {
+            result.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+        }
+    });
+</script>
+</body>
+</html>
