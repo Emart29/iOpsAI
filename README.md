@@ -320,9 +320,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 💬 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/iOps/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/iOps/discussions)
-- **Email**: support@iops.ai
+- **Issues**: [GitHub Issues](https://github.com/Emart29/iOpsAI/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Emart29/iOpsAI/discussions)
+- **Email**: nwangumaemmanuel29@gmail.com
+- **LinkedIn**: [Emmanuel Nwanguma](https://linkedin.com/in/nwangumaemmanuel)
 
 ---
 
@@ -338,7 +339,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-Made with ❤️ by the iOps team
+Made with ❤️ by [Emmanuel Nwanguma](https://linkedin.com/in/nwangumaemmanuel)
+
+**GitHub:** [@Emart29](https://github.com/Emart29) | **Email:** nwangumaemmanuel29@gmail.com
 
 [⬆ Back to top](#iops---ai-powered-data-science-copilot)
 

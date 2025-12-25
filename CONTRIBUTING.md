@@ -201,9 +201,10 @@ iOps/
 
 ## Questions?
 
-- Check existing [GitHub Issues](https://github.com/yourusername/iOps/issues)
+- Check existing [GitHub Issues](https://github.com/Emart29/iOpsAI/issues)
 - Review [Documentation](README.md)
-- Start a [Discussion](https://github.com/yourusername/iOps/discussions)
+- Start a [Discussion](https://github.com/Emart29/iOpsAI/discussions)
+- Contact: [Emmanuel Nwanguma](https://linkedin.com/in/nwangumaemmanuel) - nwangumaemmanuel29@gmail.com
 
 ## License
 
