@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insight Studio • Storytelling Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="output.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .story-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .chapter-card { transition: all 0.3s ease; }
+        .chapter-card:hover { transform: translateY(-5px); }
+        .flow-connector { position: relative; }
+        .flow-connector:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -20px;
+            width: 40px;
+            height: 2px;
+            background: #e5e7eb;
+        }
+        .dark .flow-connector:after {
+            background: #4b5563;
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse-soft { animation: pulseSoft 2s infinite; }
+        @keyframes pulseSoft {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        .drag-over { background-color: rgba(139, 92, 246, 0.1); border: 2px dashed #8b5cf6; }
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e0 #f7fafc;
+        }
+        .dark .chat-container {
+            scrollbar-color: #4a5568 #2d3748;
+        }
+        .user-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+        }
+        .ai-message {
+            background-color: #f1f5f9;
+            color: #334155;
+            border-radius: 18px 18px 18px 4px;
+        }
+        .dark .ai-message {
+            background-color: #374151;
+            color: #e5e7eb;
+        }
+        .typing-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #9ca3af;
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-indicator:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .slide-in-right {
+            animation: slideInRight 0.3s ease-out;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 story-gradient rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold">IS</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">Insight Studio</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Storytelling Dashboard</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    <span id="darkModeIcon">🌙</span>
+                </button>
+                <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                    <i class="fas fa-download mr-2"></i>Export Story
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Story Header -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 fade-in w-full">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-bold mb-2">Customer Behavior Analysis</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">An interactive story exploring customer patterns, churn drivers, and growth opportunities</p>
+                    <div class="flex space-x-4 text-sm">
+                        <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full">12,483 records</span>
+                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full">18 columns</span>
+                        <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full">98% complete</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold text-purple-600">4</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">Chapters</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 ">
+            <!-- Story Flow - 2/3 width -->
+            <div class="lg:col-span-2">
+                <div class="relative">
+                    <!-- Flow Connector Line -->
+                    <div class="absolute left-16 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700 z-0"></div>
+                    
+                    <!-- Chapter 1: The Setup -->
+                    <div class="flex items-start mb-8 relative z-10 fade-in">
+                        <div class="shrink-0 w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-lg mr-6">1</div>
+                        <div class="chapter-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex-1 border-l-4 border-purple-500">
+                            <div class="flex justify-between items-start mb-4">
+                                <h2 class="text-xl font-bold">The Setup: Understanding Our Data</h2>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-purple-600 transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-purple-600 transition-colors">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">We begin with a comprehensive dataset of 12,483 customer records spanning 18 months. Our data includes demographic information, purchase history, engagement metrics, and churn indicators.</p>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">Data Quality</div>
+                                    <div class="text-xl font-bold text-green-600">96%</div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-1">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 96%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">Missing Values</div>
+                                    <div class="text-xl font-bold text-orange-600">2.1%</div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-1">
+                                        <div class="bg-orange-500 h-2 rounded-full" style="width: 2.1%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-clock mr-1"></i> Added 2 hours ago
+                                </div>
+                                <button class="text-purple-600 hover:text-purple-700 font-medium flex items-center">
+                                    Explore Data <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chapter 2: The Insight -->
+                    <div class="flex items-start mb-8 relative z-10 fade-in">
+                        <div class="shrink-0 w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg mr-6">2</div>
+                        <div class="chapter-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex-1 border-l-4 border-blue-500">
+                            <div class="flex justify-between items-start mb-4">
+                                <h2 class="text-xl font-bold">The Insight: Churn Patterns Emerge</h2>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-blue-600 transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-blue-600 transition-colors">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Our analysis reveals a critical insight: customers with fewer than 10 orders have a 42% higher churn rate in Q4 compared to other customer segments.</p>
+                            
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="font-medium">Churn Rate by Customer Segment</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">Q4 2023</div>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span>Low-Volume Customers (<10 orders)</span>
+                                        <span class="font-bold text-red-600">24.3%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                        <div class="bg-red-500 h-2 rounded-full" style="width: 24.3%"></div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between mt-2">
+                                        <span>Mid-Volume Customers (10-50 orders)</span>
+                                        <span class="font-bold text-yellow-600">12.7%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 12.7%"></div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between mt-2">
+                                        <span>High-Volume Customers (>50 orders)</span>
+                                        <span class="font-bold text-green-600">5.2%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 5.2%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-lightbulb mr-1"></i> AI-Discovered Insight
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                                    View Analysis <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chapter 3: The Visualization -->
+                    <div class="flex items-start mb-8 relative z-10 fade-in">
+                        <div class="shrink-0 w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-lg mr-6">3</div>
+                        <div class="chapter-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex-1 border-l-4 border-green-500">
+                            <div class="flex justify-between items-start mb-4">
+                                <h2 class="text-xl font-bold">The Visualization: Revenue Trends & Patterns</h2>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-green-600 transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-green-600 transition-colors">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Visualizing our revenue data reveals clear seasonal patterns and growth trajectories, with notable dips corresponding to our churn insights.</p>
+                            
+                            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 mb-4">
+                                <canvas id="revenueChart" height="250"></canvas>
+                            </div>
+                            
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-chart-line mr-1"></i> Interactive Chart
+                                </div>
+                                <button class="text-green-600 hover:text-green-700 font-medium flex items-center">
+                                    Explore Visualizations <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chapter 4: The Resolution -->
+                    <div class="flex items-start mb-8 relative z-10 fade-in">
+                        <div class="shrink-0 w-12 h-12 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold text-lg mr-6">4</div>
+                        <div class="chapter-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex-1 border-l-4 border-orange-500">
+                            <div class="flex justify-between items-start mb-4">
+                                <h2 class="text-xl font-bold">The Resolution: Strategic Recommendations</h2>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-orange-600 transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-orange-600 transition-colors">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Based on our analysis, we recommend three strategic initiatives to reduce churn and drive growth.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div class="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800">
+                                    <div class="text-purple-600 dark:text-purple-400 mb-2">
+                                        <i class="fas fa-gift text-xl"></i>
+                                    </div>
+                                    <h3 class="font-bold mb-2">Loyalty Program</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Target mid-tier customers with personalized rewards to increase retention.</p>
+                                    <div class="mt-3 text-sm font-bold text-purple-600">+18% LTV</div>
+                                </div>
+                                
+                                <div class="bg-linear-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+                                    <div class="text-blue-600 dark:text-blue-400 mb-2">
+                                        <i class="fas fa-bullhorn text-xl"></i>
+                                    </div>
+                                    <h3 class="font-bold mb-2">Engagement Campaign</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Re-engage at-risk customers with targeted communication.</p>
+                                    <div class="mt-3 text-sm font-bold text-blue-600">-12% Churn</div>
+                                </div>
+                                
+                                <div class="bg-linear-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-lg border border-green-100 dark:border-green-800">
+                                    <div class="text-green-600 dark:text-green-400 mb-2">
+                                        <i class="fas fa-chart-pie text-xl"></i>
+                                    </div>
+                                    <h3 class="font-bold mb-2">Product Diversification</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Reduce revenue concentration by expanding product offerings.</p>
+                                    <div class="mt-3 text-sm font-bold text-green-600">+22% Revenue</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-rocket mr-1"></i> Actionable Insights
+                                </div>
+                                <button class="text-orange-600 hover:text-orange-700 font-medium flex items-center">
+                                    Export Strategy <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Chapter Button -->
+                    <div class="flex items-start mb-8 relative z-10">
+                        <div class="shrink-0 w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 flex items-center justify-center font-bold text-lg mr-6 pulse-soft">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex-1 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center cursor-pointer hover:border-purple-400 transition-colors">
+                            <div class="text-purple-600 mb-2">
+                                <i class="fas fa-plus-circle text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold mb-1">Add New Chapter</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Continue your data story with another insight</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Story Controls -->
+                <div class="flex justify-between items-center mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-history mr-1"></i> Last updated 15 minutes ago
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="px-5 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors font-medium">
+                            <i class="fas fa-share-alt mr-2"></i>Share Story
+                        </button>
+                        <button class="px-5 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors font-medium">
+                            <i class="fas fa-file-pdf mr-2"></i>Export as PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Chat Interface - 1/3 width -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden slide-in-right">
+                    <!-- Chat Header -->
+                    <div class="story-gradient p-4 text-white">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-lg">Sight</h2>
+                                <p class="text-sm opacity-80">AI Data Assistant</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div class="chat-container p-4" id="chatMessages">
+                        <div class="mb-4 flex justify-start">
+                            <div class="ai-message p-3 max-w-[80%]">
+                                <p>Hi! I'm Sight, your AI data assistant. I can help you explore your data, generate insights, and build your story. What would you like to know about your customer behavior analysis?</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 flex justify-end">
+                            <div class="user-message p-3 max-w-[80%]">
+                                <p>What's the most interesting pattern in the data?</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 flex justify-start">
+                            <div class="ai-message p-3 max-w-[80%]">
+                                <p>The most compelling pattern is the seasonal churn spike among low-volume customers. In Q4, customers with fewer than 10 orders have a 24.3% churn rate - that's 42% higher than other segments. This suggests we need targeted retention strategies for this group during holiday seasons.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 flex justify-end">
+                            <div class="user-message p-3 max-w-[80%]">
+                                <p>Can you suggest a visualization for this?</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 flex justify-start">
+                            <div class="ai-message p-3 max-w-[80%]">
+                                <p>I'd recommend a dual-axis chart showing monthly revenue alongside churn rates. This would clearly illustrate the correlation between revenue dips and churn spikes. You could also create a segmented bar chart comparing churn rates across customer tiers throughout the year.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="border-t border-gray-200 dark:border-gray-700 p-4">
+                        <div class="flex space-x-2">
+                            <input type="text" id="chatInput" placeholder="Ask about your data..." class="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <button id="sendMessage" class="bg-purple-600 text-white rounded-lg px-4 py-2 hover:bg-purple-700 transition-colors">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <button class="suggested-question text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Show key metrics</button>
+                            <button class="suggested-question text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Explain churn drivers</button>
+                            <button class="suggested-question text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Suggest improvements</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Upload Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-8">
+                    <h3 class="font-bold text-lg mb-4">Upload Your Data</h3>
+                    <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-purple-400 transition-colors cursor-pointer" id="dropZone">
+                        <div class="text-purple-500 mb-2">
+                            <i class="fas fa-cloud-upload-alt text-3xl"></i>
+                        </div>
+                        <p class="font-medium mb-1">Drag & drop your files here</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Supports CSV, Excel, and JSON files</p>
+                        <button class="bg-purple-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-purple-700 transition-colors">
+                            <i class="fas fa-folder-open mr-2"></i>Browse Files
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                        <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg text-center">
+                            <div class="text-blue-500 mb-1">
+                                <i class="fas fa-file-csv"></i>
+                            </div>
+                            <div class="text-sm font-medium">CSV</div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg text-center">
+                            <div class="text-green-500 mb-1">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                            <div class="text-sm font-medium">Excel</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-8">
+                    <h3 class="font-bold text-lg mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button class="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 mr-3">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <span>Generate Report</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </button>
+                        
+                        <button class="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center text-green-600 dark:text-green-400 mr-3">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <span>Export Python Code</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </button>
+                        
+                        <button class="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400 mr-3">
+                                    <i class="fas fa-share-alt"></i>
+                                </div>
+                                <span>Share Analysis</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            darkModeIcon.textContent = isDark ? '☀️' : '🌙';
+            localStorage.theme = isDark ? 'dark' : 'light';
+        });
+
+        // Initialize dark mode based on user preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            darkModeIcon.textContent = '☀️';
+        } else {
+            document.documentElement.classList.remove('dark');
+            darkModeIcon.textContent = '🌙';
+        }
+
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Monthly Revenue',
+                    data: [125, 138, 155, 148, 172, 190, 210, 235, 260, 248, 285, 320],
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Customer Churn',
+                    data: [8.2, 7.5, 6.9, 8.1, 7.3, 9.2, 10.5, 11.8, 14.2, 16.5, 18.3, 24.3],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Revenue (in thousands)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Churn Rate (%)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    }
+                }
+            }
+        });
+
+        // Chat Functionality
+        const chatInput = document.getElementById('chatInput');
+        const sendMessage = document.getElementById('sendMessage');
+        const chatMessages = document.getElementById('chatMessages');
+        const suggestedQuestions = document.querySelectorAll('.suggested-question');
+        const dropZone = document.getElementById('dropZone');
+
+        // Sample AI responses
+        const aiResponses = [
+            "Based on your data, I notice that customer engagement drops significantly after the third purchase. Implementing a loyalty program at this point could improve retention by 15-20%.",
+            "The correlation between customer support response time and churn rate is strong. Reducing average response time from 24 to 12 hours could decrease churn by 8%.",
+            "Your data shows seasonal patterns with peaks in Q2 and Q4. Consider allocating more marketing budget during these periods to maximize ROI.",
+            "I've analyzed the demographic data. Customers aged 25-34 have the highest lifetime value. Targeting this demographic could increase overall revenue by 12%.",
+            "The product return rate is highest for items in the electronics category. Improving product descriptions and images could reduce returns by 25%."
+        ];
+
+        // Function to add a message to the chat
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `mb-4 flex ${isUser ? 'justify-end' : 'justify-start'}`;
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.className = isUser ? 'user-message p-3 max-w-[80%]' : 'ai-message p-3 max-w-[80%]';
+            messageBubble.innerHTML = `<p>${message}</p>`;
+            
+            messageDiv.appendChild(messageBubble);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Function to simulate AI typing
+        function simulateTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'mb-4 flex justify-start';
+            
+            const typingBubble = document.createElement('div');
+            typingBubble.className = 'ai-message p-3';
+            typingBubble.innerHTML = `
+                <div class="flex space-x-1">
+                    <div class="typing-indicator"></div>
+                    <div class="typing-indicator"></div>
+                    <div class="typing-indicator"></div>
+                </div>
+            `;
+            
+            typingDiv.appendChild(typingBubble);
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return typingDiv;
+        }
+
+        // Send message function
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (message === '') return;
+            
+            // Add user message
+            addMessage(message, true);
+            chatInput.value = '';
+            
+            // Simulate AI thinking
+            const typingIndicator = simulateTyping();
+            
+            // After a delay, replace with AI response
+            setTimeout(() => {
+                typingIndicator.remove();
+                
+                // Get random AI response
+                const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                addMessage(randomResponse, false);
+            }, 1500);
+        }
+
+        // Event listeners
+        sendMessage.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        // Suggested questions
+        suggestedQuestions.forEach(button => {
+            button.addEventListener('click', () => {
+                chatInput.value = button.textContent;
+                sendChatMessage();
+            });
+        });
+
+        // Drag and drop for file upload
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('drag-over');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('drag-over');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                addMessage(`I see you've uploaded ${files.length} file(s). I'm analyzing the data now...`, false);
+                
+                // Simulate file processing
+                setTimeout(() => {
+                    addMessage("Analysis complete! I've found some interesting patterns in your data. Would you like me to create a visualization or generate insights?", false);
+                }, 2000);
+            }
+        }
+
+        // Add animation to chapter cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.chapter-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
