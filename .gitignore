@@ -1,0 +1,91 @@
+# Kiro Specifications (Development only)
+.kiro/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+test_migration.db
+
+# Uploads and temp files
+uploads/
+temp_uploads/
+backups/
+data/
+*.csv
+*.xlsx
+*.xls
+
+# Environment
+.env
+.env.local
+.env.production
+.env.*.local
+.env.example
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+analyses.json
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build outputs
+dist/
+*.tsbuildinfo
+build/
+
+# TypeScript
+tsc_errors*.txt
+tsc_output.txt
+
+# Vercel
+.vercel
+
+# Render
+.render
+
+# Railway
+.railway
+
+# Misc
+.DS_Store
+*.pem
+*.key
+*.crt
